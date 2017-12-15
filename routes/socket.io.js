@@ -8,7 +8,7 @@ module.exports = (io) => {
 			io.emit('newScoreToClient', { message: "반가워" });
 		});
 		socket.on('init', function(data){
-			
+			//
 		});
 	});
 
