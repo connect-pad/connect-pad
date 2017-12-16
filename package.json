@@ -15,6 +15,7 @@
     "md5": "^2.2.1",
     "morgan": "~1.9.0",
     "nodemon": "^1.13.2",
+    "nosql": "^6.1.0",
     "serve-favicon": "~2.4.5",
     "socket.io": "^2.0.4",
     "websocket": "^1.0.25"

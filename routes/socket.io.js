@@ -1,4 +1,6 @@
 const md5 = require('md5');
+var NoSQL = require('nosql');
+var db = noSql.load(__dirname + "/../db.nosql");
 
 global.GAME_MAXIMUM_USER_COUNT = 4;
 global.GAME_USER_JOIN_TIMEOUT_MILLI_SECOND = 20 * 1000;
