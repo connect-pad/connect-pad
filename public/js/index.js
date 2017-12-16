@@ -19,6 +19,19 @@ $(document).ready(function () {
 		navigator.vibrate(parseInt(data.time));
 	});
 
+	socket.on('gameStart', function(data){
+		$("body>div, body>form").addClass('inactive');
+		$(".gamePlay").removeClass('inactive');		
+	});
+
+	socket.on('serverRestarted', function(data){
+		location.reload();
+	});
+
+	socket.on('disconnected', function(data){
+		location.reload();
+	});
+
 	$("body>div, body>form").addClass('inactive');
 	$(".setUserName").removeClass('inactive');
 

@@ -43,6 +43,13 @@ wsServer.on('request', function (request) {
 	// make sure that client is connecting from your website
 	// (http://en.wikipedia.org/wiki/Same_origin_policy)
 	global.connection = request.accept(null, request.origin);
+	try{
+		global.serverRestarted();
+
+	}
+	catch(e){
+
+	}
 	// we need to know client index to remove them on 'close' event
 	console.log((new Date()) + ' Connection accepted.');
 	// send back chat history

@@ -1,6 +1,6 @@
 const md5 = require('md5');
 
-global.GAME_MAXIMUM_USER_COUNT = 3;
+global.GAME_MAXIMUM_USER_COUNT = 2;
 global.GAME_USER_JOIN_TIMEOUT_MILLI_SECOND = 20 * 1000;
 
 
@@ -42,7 +42,20 @@ module.exports = (io) => {
 						event: "gameStart",
 						userList: getReadyUserListWithoutSocket()
 					}
-				)
+				);
+				// currentGameUserQueue.map(user => {
+				// 	user.socket.emit('gameStart', {});
+				// });
+				console.log(currentGameUserQueue);
+				currentGameUserQueue.forEach((element, index) => {
+					element.socket.emit(
+						'gameStart',
+						{
+						}
+					)
+
+				});
+
 			}
 		});
 
@@ -87,7 +100,7 @@ module.exports = (io) => {
 		});
 
 		socket.on('disconnect', function () {
-			waitingQueue = waitingQueue.filter(usr => usr.connected);
+			// waitingQueue = waitingQueue.filter(usr => usr.connected);
 			console.log(uid + " disconnected");
 			sendJsonToCorona(
 				{
@@ -97,114 +110,141 @@ module.exports = (io) => {
 			);
 		});
 
-		function sendJsonToCorona(jsonData) {
 
-			/*
-			global.connection.sendBytes(
-				Buffer.from(
-					JSON.stringify(jsonData),
-					'utf8'
-				)
-			);*/
-		}
-
-		function getConnectedUserList() {
-			console.log("waiting que");
-			console.log(waitingQueue);
-			console.log("getConnectedUserList");
-			return waitingQueue.filter(user => user.socket.connected);
-		}
-
-		function checkAndStartGroupJoin() {
-			console.log("checkAndStartGroupJoin");
-			if (isGamePlaying == false && isGroupHasEnoughUsers()) {
-				startGroupJoin();
-			}
-		}
-
-		function isGroupHasEnoughUsers() {
-			console.log("isGroupHasEnoughUsers");
-			console.log(getConnectedUserList().length >= global.GAME_MAXIMUM_USER_COUNT);
-			return getConnectedUserList().length >= global.GAME_MAXIMUM_USER_COUNT;
-		}
-
-		function startGroupJoin() {
-			console.log("startGroupJoin")
-			console.log(waitingQueue)
-			currentGameUserQueue = waitingQueue.splice(0, global.GAME_MAXIMUM_USER_COUNT);
-			console.log("splitted")
-			console.log(waitingQueue)
-
-			currentGameUserQueue.forEach((element, index) => {
-				element.socket.emit(
-					'userGroupReady',
-					{
-						'class': index
-					}
-				)
-
-			});
-
-			rejectUnreadyUserAfterJoinTimeout();
-
-		}
-
-		function isAllGroupUserJoined() {
-			return currentGameUserQueue.filter(user => user.isJoined == false).length == 0;
-		}
-
-		function getReadyUserListWithoutSocket() {
-			return currentGameUserQueue
-				.filter(user => user.socket.connected)
-				.filter(user => user.isJoined)
-				.map(user => {
-					delete user.socket;
-					return user
-				});
-		}
-
-		function rejectUnreadyUserAfterJoinTimeout() {
-			setTimeout(() => {
-				console.log("rejectUnreadyUserAfterJoinTimeout");
-				console.log(currentGameUserQueue);
-				var additionalUserCount = currentGameUserQueue
-					.filter(user => user.socket.connected == false || user.isJoined == false)
-					.length;
-
-				console.log("additionalUserCount : " + additionalUserCount);
-				if (additionalUserCount != 0) {
-					var joinedUserList = currentGameUserQueue.filter(user => user.isJoined);
-					if(joinedUserList != 0)	waitingQueue.unshift(joinedUserList);
-					checkAndStartGroupJoin();
-				}
-			},
-				global.GAME_USER_JOIN_TIMEOUT_MILLI_SECOND
-			);
-
-		}
-
-		global.gameEnd = function () {
-			var dd = [];
-
-			currentGameUserQueue.map(data => {
-				data.socket.emit('gameEnd', {});
-				data.isJoined = false;
-			});
-
-			waitingQueue.push(currentGameUserQueue);
-			currentGameUserQueue = [];
-			isGamePlaying = false;
-			checkAndStartGroupJoin();
-
-		}
-
-		global.emitToUserSocket = function (uid, event, content) {
-			io.to('/#' + uid).emit(event, content);
-		}
 
 
 
 	});
 
+	function sendJsonToCorona(jsonData) {
+
+		global.connection & global.connection.sendBytes(
+			Buffer.from(
+				JSON.stringify(jsonData),
+				'utf8'
+			)
+		);
+	}
+
+	function getConnectedUserList() {
+		console.log("waiting que");
+		console.log(waitingQueue);
+		console.log("getConnectedUserList");
+		return waitingQueue.filter(user => user.socket.connected);
+	}
+
+	function checkAndStartGroupJoin() {
+		console.log("checkAndStartGroupJoin");
+		if (isGamePlaying == false && isGroupHasEnoughUsers()) {
+			startGroupJoin();
+		}
+	}
+
+	function isGroupHasEnoughUsers() {
+		console.log("isGroupHasEnoughUsers");
+		console.log(getConnectedUserList().length >= global.GAME_MAXIMUM_USER_COUNT);
+		return getConnectedUserList().length >= global.GAME_MAXIMUM_USER_COUNT;
+	}
+
+	function startGroupJoin() {
+		console.log("startGroupJoin")
+		console.log(waitingQueue)
+		currentGameUserQueue = waitingQueue.splice(0, global.GAME_MAXIMUM_USER_COUNT);
+		console.log("splitted")
+		console.log(waitingQueue)
+
+		currentGameUserQueue.forEach((element, index) => {
+			element.socket.emit(
+				'userGroupReady',
+				{
+					'class': index
+				}
+			)
+
+		});
+
+		rejectUnreadyUserAfterJoinTimeout();
+
+	}
+
+	function isAllGroupUserJoined() {
+		return currentGameUserQueue.filter(user => user.isJoined == false).length == 0;
+	}
+
+	function getReadyUserListWithoutSocket() {
+		return currentGameUserQueue
+			.filter(user => user.socket.connected)
+			.filter(user => user.isJoined)
+			.map(user => {
+				return {
+
+					'uid': user.uid,
+					'userName': user.userName,
+					'class': user.class,
+					'isJoined': user.isJoined
+				}
+			});
+	}
+
+	function rejectUnreadyUserAfterJoinTimeout() {
+		setTimeout(() => {
+			console.log("rejectUnreadyUserAfterJoinTimeout");
+			console.log(currentGameUserQueue);
+			var additionalUserCount = currentGameUserQueue
+				.filter(user => user.socket.connected == false || user.isJoined == false)
+				.length;
+
+			console.log("additionalUserCount : " + additionalUserCount);
+			if (additionalUserCount != 0) {
+				var joinedUserList = currentGameUserQueue.filter(user => user.isJoined);
+				if (joinedUserList != 0) waitingQueue.unshift(joinedUserList);
+				checkAndStartGroupJoin();
+			}
+		},
+			global.GAME_USER_JOIN_TIMEOUT_MILLI_SECOND
+		);
+
+	}
+
+	global.gameEnd = function () {
+		var dd = [];
+
+		currentGameUserQueue.map(data => {
+			data.socket.emit('gameEnd', {});
+			data.isJoined = false;
+		});
+
+		waitingQueue.push(currentGameUserQueue);
+		currentGameUserQueue = [];
+		isGamePlaying = false;
+		checkAndStartGroupJoin();
+
+	}
+
+	global.emitToUserSocket = function (uid, event, content) {
+		io.to('/#' + uid).emit(event, content);
+	}
+
+	global.serverRestarted = function () {
+		console.log("serverRestarted1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		try {
+
+
+			Object.keys(io.sockets.sockets).forEach(function (s) {
+				io.sockets.sockets[s].emit('serverRestarted', {});
+				io.sockets.sockets[s].disconnect(true);
+			});
+
+			isGamePlaying = false;
+			waitingQueue = [];
+			currentGameUserQueue = [];
+
+		}
+		catch (e) {
+			console.log(e);
+		}
+	}
+
+	global.serverRestarted();
 
 };
