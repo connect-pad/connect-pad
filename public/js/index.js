@@ -71,6 +71,14 @@ $(document).ready(function () {
 		socket.emit('arrowKeyUp', {});
 	});
 
+	padRight.on('move', function (e, data) {
+		socket.emit('rotationKeyDown', { Angle: data.angle.degree });
+	});
+
+	padRight.on('end', function (e) {
+		socket.emit('rotationKeyUp', {});
+	});
+
 
 
 });

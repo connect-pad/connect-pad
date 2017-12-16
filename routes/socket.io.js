@@ -15,10 +15,17 @@ module.exports = (io) => {
 		});
 
 		socket.on('arrowKeyDown', (data) => {
-			console.log(data);
+			console.log(uid + " " + JSON.stringify(data));
 		});
 		socket.on('arrowKeyUp', (data) => {
-			console.log(data);
+			console.log(uid + " " + JSON.stringify(data));
+		});
+
+		socket.on('rotationKeyDown', (data) => {
+			console.log(uid + " " + JSON.stringify(data));
+		});
+		socket.on('rotationKeyUp', (data) => {
+			console.log(uid + " " + JSON.stringify(data));
 		});
 
 		socket.on('disconnect', function () {

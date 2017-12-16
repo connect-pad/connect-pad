@@ -36,6 +36,7 @@ const socketEvents = require('../routes/socket.io.js');
 const io = new socketIo(server);
 socketEvents(io);
 
+const coronaSocket = require('../routes/socket.corona');
 /**
  * Normalize a port into a number, string, or false.
  */
