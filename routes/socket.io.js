@@ -97,13 +97,13 @@ module.exports = (io) => {
 		});
 
 		function sendJsonToCorona(jsonData) {
-			/*
+			
 			global.connection.sendBytes(
 				Buffer.from(
 					JSON.stringify(jsonData), 
 					'utf8'
 				)
-			);*/
+			);
 		}
 		
 		function getConnectedUserList(){
