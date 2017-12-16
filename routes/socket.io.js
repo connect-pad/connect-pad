@@ -198,6 +198,11 @@ module.exports = (io) => {
 
 		}
 
+		global.emitToUserSocket = function (uid, event, content) {
+			io.to('/#' + uid).emit(event, content);
+		}
+
+
 
 	});
 
