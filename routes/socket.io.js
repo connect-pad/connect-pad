@@ -1,16 +1,14 @@
 const md5 = require('md5');
-var NoSQL = require('nosql');
-var db = noSql.load(__dirname + "/../db.nosql");
 
-global.GAME_MAXIMUM_USER_COUNT = 4;
+global.GAME_MAXIMUM_USER_COUNT = 3;
 global.GAME_USER_JOIN_TIMEOUT_MILLI_SECOND = 20 * 1000;
 
 
 module.exports = (io) => {
 	console.log("socket.io.js has been exported");
-	io.isGamePlaying = false;
-	io.waitingQueue = [];
-	io.currentGameUserQueue = [];
+	var isGamePlaying = false;
+	var waitingQueue = [];
+	var currentGameUserQueue = [];
 	io.on('connection', (socket) => {
 		var uid = socket.id;
 		console.log(uid + " connected");
@@ -28,9 +26,9 @@ module.exports = (io) => {
 		socket.on('initialization', (data) => {
 			console.log(data);
 			currentUser.userName = data.name;
-			console.log("init::: io.waitingQueue");
-			console.log(io.waitingQueue);
-			io.waitingQueue.push(currentUser);
+			console.log("init::: waitingQueue");
+			console.log(waitingQueue);
+			waitingQueue.push(currentUser);
 
 			checkAndStartGroupJoin();
 		});
@@ -89,7 +87,7 @@ module.exports = (io) => {
 		});
 
 		socket.on('disconnect', function () {
-			io.waitingQueue = io.waitingQueue.filter(usr => usr.connected);
+			waitingQueue = waitingQueue.filter(usr => usr.connected);
 			console.log(uid + " disconnected");
 			sendJsonToCorona(
 				{
@@ -101,26 +99,25 @@ module.exports = (io) => {
 
 		function sendJsonToCorona(jsonData) {
 
+			/*
 			global.connection.sendBytes(
 				Buffer.from(
 					JSON.stringify(jsonData),
 					'utf8'
 				)
-			);
+			);*/
 		}
 
 		function getConnectedUserList() {
 			console.log("waiting que");
-			console.log(io.waitingQueue);
+			console.log(waitingQueue);
 			console.log("getConnectedUserList");
-			console.log(io.waitingQueue.filter(user => user.socket.connected));
-			return io.waitingQueue.filter(user => user.socket.connected);
+			return waitingQueue.filter(user => user.socket.connected);
 		}
 
 		function checkAndStartGroupJoin() {
 			console.log("checkAndStartGroupJoin");
-			console.log(io.isGamePlaying == false && isGroupHasEnoughUsers());
-			if (io.isGamePlaying == false && isGroupHasEnoughUsers()) {
+			if (isGamePlaying == false && isGroupHasEnoughUsers()) {
 				startGroupJoin();
 			}
 		}
@@ -132,9 +129,13 @@ module.exports = (io) => {
 		}
 
 		function startGroupJoin() {
-			io.currentGameUserQueue = io.waitingQueue.splice(0, global.GAME_MAXIMUM_USER_COUNT);
+			console.log("startGroupJoin")
+			console.log(waitingQueue)
+			currentGameUserQueue = waitingQueue.splice(0, global.GAME_MAXIMUM_USER_COUNT);
+			console.log("splitted")
+			console.log(waitingQueue)
 
-			io.currentGameUserQueue.forEach((element, index) => {
+			currentGameUserQueue.forEach((element, index) => {
 				element.socket.emit(
 					'userGroupReady',
 					{
@@ -149,11 +150,11 @@ module.exports = (io) => {
 		}
 
 		function isAllGroupUserJoined() {
-			return io.currentGameUserQueue.filter(user => user.isJoined == false).length == 0;
+			return currentGameUserQueue.filter(user => user.isJoined == false).length == 0;
 		}
 
 		function getReadyUserListWithoutSocket() {
-			return io.currentGameUserQueue
+			return currentGameUserQueue
 				.filter(user => user.socket.connected)
 				.filter(user => user.isJoined)
 				.map(user => {
@@ -164,12 +165,16 @@ module.exports = (io) => {
 
 		function rejectUnreadyUserAfterJoinTimeout() {
 			setTimeout(() => {
-				var additionalUserCount = io.currentGameUserQueue
+				console.log("rejectUnreadyUserAfterJoinTimeout");
+				console.log(currentGameUserQueue);
+				var additionalUserCount = currentGameUserQueue
 					.filter(user => user.socket.connected == false || user.isJoined == false)
 					.length;
 
+				console.log("additionalUserCount : " + additionalUserCount);
 				if (additionalUserCount != 0) {
-					io.waitingQueue.unshift(io.currentGameUserQueue.filter(user => user.isJoined));
+					var joinedUserList = currentGameUserQueue.filter(user => user.isJoined);
+					if(joinedUserList != 0)	waitingQueue.unshift(joinedUserList);
 					checkAndStartGroupJoin();
 				}
 			},
@@ -181,14 +186,14 @@ module.exports = (io) => {
 		global.gameEnd = function () {
 			var dd = [];
 
-			io.currentGameUserQueue.map(data => {
+			currentGameUserQueue.map(data => {
 				data.socket.emit('gameEnd', {});
 				data.isJoined = false;
 			});
 
-			io.waitingQueue.push(io.currentGameUserQueue);
-			io.currentGameUserQueue = [];
-			io.isGamePlaying = false;
+			waitingQueue.push(currentGameUserQueue);
+			currentGameUserQueue = [];
+			isGamePlaying = false;
 			checkAndStartGroupJoin();
 
 		}
