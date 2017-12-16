@@ -55,6 +55,8 @@ module.exports = (io) => {
 					)
 
 				});
+				timeoutTimer && clearTimeout(timeoutTimer);
+				isGamePlaying = true;
 
 			}
 		});
@@ -186,8 +188,10 @@ module.exports = (io) => {
 			});
 	}
 
+	var timeoutTimer;
 	function rejectUnreadyUserAfterJoinTimeout() {
-		setTimeout(() => {
+		timeoutTimer && clearTimeout(timeoutTimer);
+		timeoutTimer = setTimeout(() => {
 			console.log("rejectUnreadyUserAfterJoinTimeout");
 			console.log(currentGameUserQueue);
 			var additionalUserCount = currentGameUserQueue
@@ -196,8 +200,14 @@ module.exports = (io) => {
 
 			console.log("additionalUserCount : " + additionalUserCount);
 			if (additionalUserCount != 0) {
-				var joinedUserList = currentGameUserQueue.filter(user => user.isJoined);
-				if (joinedUserList != 0) waitingQueue.unshift(joinedUserList);
+				currentGameUserQueue.map(user => {
+					if (user.isJoined){
+						waitingQueue.splice(0, 0, user);
+					}
+					else{
+						user.socket.disconnect(true);
+					}
+				});
 				checkAndStartGroupJoin();
 			}
 		},
@@ -207,14 +217,14 @@ module.exports = (io) => {
 	}
 
 	global.gameEnd = function () {
-		var dd = [];
-
+		console.log("gameEnd called")
+		console.log(currentGameUserQueue)
 		currentGameUserQueue.map(data => {
 			data.socket.emit('gameEnd', {});
 			data.isJoined = false;
+			waitingQueue.push(data);
 		});
 
-		waitingQueue.push(currentGameUserQueue);
 		currentGameUserQueue = [];
 		isGamePlaying = false;
 		checkAndStartGroupJoin();
