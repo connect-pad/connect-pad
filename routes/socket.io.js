@@ -34,7 +34,7 @@ module.exports = (io) => {
 		});
 
 		socket.on('userJoin', (data) => {
-			currentUser.isJoined = True;
+			currentUser.isJoined = true;
 
 			if (isAllGroupUserJoined()) {
 				sendJsonToCorona(
