@@ -24,6 +24,12 @@ $(document).ready(function () {
 		$(".gamePlay").removeClass('inactive');		
 	});
 
+	socket.on('gameEnd', function(data){
+		$("body>div, body>form").addClass('inactive');
+		$(".waitForReady").removeClass('inactive');
+		
+	});
+
 	socket.on('serverRestarted', function(data){
 		location.reload();
 	});
@@ -109,6 +115,16 @@ $(document).ready(function () {
 		socket.emit('rotationKeyUp', {});
 	});
 
-
+	var timeoutTimer ;
+	document.addEventListener("visibilitychange", function(e) { 
+		console.log(document.hidden, document.visibilityState);
+		timeoutTimer && clearTimeout(timeoutTimer);
+		if(document.hidden || document.visibilityState == "hidden"){
+			timeoutTimer = setTimeout(function() {
+				socket.disconnect();
+				location.reload();
+			}, 3000);
+		}
+	}, false);
 
 });

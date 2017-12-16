@@ -31,9 +31,14 @@ server.on('listening', onListening);
 
 global.userList = [];
 
+var options = {
+  pingTimeout: 3000,
+  pingInterval: 1000
+};
+
 const socketIo = require('socket.io');
 const socketEvents = require('../routes/socket.io.js');
-const io = new socketIo(server);
+const io = new socketIo(server, options);
 socketEvents(io);
 
 const coronaSocket = require('../routes/socket.corona');
