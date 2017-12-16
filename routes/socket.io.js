@@ -118,7 +118,7 @@ module.exports = (io) => {
 
 	function sendJsonToCorona(jsonData) {
 
-		global.connection & global.connection.sendBytes(
+		global.connection && global.connection.sendBytes(
 			Buffer.from(
 				JSON.stringify(jsonData),
 				'utf8'
