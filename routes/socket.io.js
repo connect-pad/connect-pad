@@ -29,7 +29,8 @@ module.exports = (io) => {
 			console.log("init::: io.waitingQueue");
 			console.log(io.waitingQueue);
 			io.waitingQueue.push(currentUser);
-
+			socket.emit('vibration', { time: 500 });
+			
 			checkAndStartGroupJoin();
 		});
 
@@ -190,6 +191,11 @@ module.exports = (io) => {
 			checkAndStartGroupJoin();
 
 		}
+
+		global.emitToUserSocket = function (uid, event, content) {
+			io.to('/#' + uid).emit(event, content);
+		}
+
 
 
 	});

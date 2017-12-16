@@ -59,10 +59,14 @@ wsServer.on('request', function (request) {
 			var data = JSON.parse(message.utf8Data);
 			switch (data.event) {
 				case "gameEnd":
-					global.gameEnd();					
+					global.gameEnd();
 					break;
 				case "vibration":
+					global.emitToUserSocket(data.uid, data.event, {time: data.time});
+					break;
 				case "soundEffect":
+					global.emitToUserSocket(data.uid, data.event, {file: data.file});
+					break;
 				default:
 					break;
 			}

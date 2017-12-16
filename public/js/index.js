@@ -11,7 +11,12 @@ $(document).ready(function () {
 
 	socket.on('userGroupReady', function (data) {
 		$("body>div, body>form").addClass('inactive');
-		$(".gamePad").removeClass('inactive');
+		$(".joinGame").removeClass('inactive');
+	});
+
+	socket.on('vibration', function (data) {
+		console.log(data);
+		navigator.vibrate(parseInt(data.time));
 	});
 
 	$("body>div, body>form").addClass('inactive');
@@ -21,6 +26,13 @@ $(document).ready(function () {
 	$("body").on("submit", ".setUserName", function (e) {
 		e.preventDefault();
 		socket.emit('initialization', { name: $(this).find('input').val() });
+		$("body>div, body>form").addClass('inactive');
+		$(".waitForReady").removeClass('inactive');
+	});
+
+	$("body").on("submit", ".joinGame", function (e) {
+		e.preventDefault();
+		socket.emit('userJoin', {});
 		$("body>div, body>form").addClass('inactive');
 		$(".waitForReady").removeClass('inactive');
 	});
