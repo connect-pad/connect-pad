@@ -9,6 +9,11 @@ $(document).ready(function () {
 		$("body").append("session: " + data);
 	})
 
+	socket.on('userGroupReady', function (data) {
+		$("body>div, body>form").addClass('inactive');
+		$(".gamePad").removeClass('inactive');
+	});
+
 	$("body>div, body>form").addClass('inactive');
 	$(".setUserName").removeClass('inactive');
 
@@ -16,8 +21,8 @@ $(document).ready(function () {
 	$("body").on("submit", ".setUserName", function (e) {
 		e.preventDefault();
 		socket.emit('initialization', { name: $(this).find('input').val() });
-		$(".setUserName").addClass('inactive');
-		$(".gamePlay").removeClass('inactive');
+		$("body>div, body>form").addClass('inactive');
+		$(".waitForReady").removeClass('inactive');
 	});
 
 
@@ -72,7 +77,7 @@ $(document).ready(function () {
 	});
 
 	padRight.on('move', function (e, data) {
-		socket.emit('rotationKeyDown', { Angle: data.angle.degree });
+		socket.emit('rotationKeyDown', { angle: data.angle.degree });
 	});
 
 	padRight.on('end', function (e) {

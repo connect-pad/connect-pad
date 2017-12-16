@@ -56,6 +56,16 @@ wsServer.on('request', function (request) {
 			// first message sent by user is their name
 
 			// message.utf8Data
+			var data = JSON.parse(message.utf8Data);
+			switch (data.event) {
+				case "gameEnd":
+					global.gameEnd();					
+					break;
+				case "vibration":
+				case "soundEffect":
+				default:
+					break;
+			}
 
 			// global.connection.sendUTF(
 			// 	JSON.stringify({ type: 'color', data: userColor }));
