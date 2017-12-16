@@ -1,6 +1,6 @@
 "use strict";
 // Port where we'll run the websocket server
-var webSocketsServerPort = 1337;
+var webSocketsServerPort = 443;
 // websocket and http servers
 var webSocketServer = require('websocket').server;
 var http = require('http');
