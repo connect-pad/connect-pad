@@ -232,7 +232,7 @@ module.exports = (io) => {
 		console.log(content);
 		try {
 
-			io.sockets.connected(uid).emit.emit(event, content);
+			io.sockets.connected(uid).emit(event, content);
 		}
 		catch (e) {
 			console.log(e);
