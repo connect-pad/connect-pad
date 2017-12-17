@@ -99,6 +99,11 @@ $(document).ready(function () {
 	$(".splashScreen").removeClass('inactive');
 
 
+	setTimeout(() => {
+		$("body>div, body>form").addClass('inactive');
+		$(".setUserName").removeClass('inactive');
+	}, 500);
+
 	$("body").on("submit", ".setUserName", function (e) {
 		e.preventDefault();
 		socket.emit('initialization', { name: $(this).find('input').val() });
