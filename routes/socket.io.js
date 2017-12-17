@@ -1,6 +1,6 @@
 const md5 = require('md5');
 
-global.GAME_MAXIMUM_USER_COUNT = 4;
+global.GAME_MAXIMUM_USER_COUNT = 2;
 global.GAME_USER_JOIN_TIMEOUT_MILLI_SECOND = 20 * 1000;
 
 
@@ -35,7 +35,7 @@ module.exports = (io) => {
 
 		socket.on('userJoin', (data) => {
 			currentUser.isJoined = true;
-
+			currentUser.class = data.class;
 			if (isAllGroupUserJoined()) {
 				sendJsonToCorona(
 					{

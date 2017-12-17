@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-	
+
 	var soundList = [
 		{ filename: "131660__bertrof__game-sound-correct.wav", name: "button" }
 		// { filename: "1. Dead Inside.mp3", name: "button1" }
@@ -30,11 +30,26 @@ $(document).ready(function () {
 	createjs.Sound.play("button");
 
 	$(".joinGame-selectCharacter").slick({
-		slidesToShow: 1,
+		slidesToShow: 1.5,
 		slidesToScroll: 1,
 		autoplay: false,
-		speed: 1000
+		speed: 500
 	});
+	$("body").on('click','.joinGame-selectCharacter .slick-slide', function(){
+		// slickGoTo
+		console.log($(this).attr('data-slick-index'));
+		$(".joinGame-selectCharacter").slick("slickGoTo", $(this).attr('data-slick-index'));
+
+	});
+
+	
+
+	// $(".joinGame-selectCharacter").on('beforeChange', function (event, slick, currentSlide, nextSlide) {
+	// 	$(".joinGame-selectCharacter div").removeClass("selected");
+	// 	$(".joinGame-selectCharacter div:eq("+nextSlide+")").addClass('selected');
+	// 	console.log(nextSlide);
+	// });
+
 
 
 	var socket = io.connect(location.protocol + '//' + location.hostname + ':' + location.port);
@@ -94,7 +109,9 @@ $(document).ready(function () {
 
 	$("body").on("submit", ".joinGame", function (e) {
 		e.preventDefault();
-		socket.emit('userJoin', {});
+		socket.emit('userJoin', {
+			class: $(".joinGame-selectCharacter").slick('slickCurrentSlide') + 1
+		});
 		$("body>div, body>form").addClass('inactive');
 		$(".waitForReady").removeClass('inactive');
 		createjs.Sound.play("button");
@@ -154,7 +171,7 @@ $(document).ready(function () {
 	});
 
 	padRight.on('move', function (e, data) {
-		socket.emit('rotationKeyDown', { angle: data.angle.degree });
+		socket.emit('rotationKeyDown', { angle: data.angle.radian });
 	});
 
 	padRight.on('end', function (e) {
