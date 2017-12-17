@@ -231,8 +231,7 @@ module.exports = (io) => {
 		console.log(event);
 		console.log(content);
 		try {
-
-			io.sockets.connected(uid).emit(event, content);
+			currentGameUserQueue.filter(s => s.uid == uid)[0].socket.emit(event, content);
 		}
 		catch (e) {
 			console.log(e);
