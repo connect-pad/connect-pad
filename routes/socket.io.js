@@ -120,9 +120,7 @@ module.exports = (io) => {
 
 	function sendJsonToCorona(jsonData) {
 
-		global.connection && global.connection.sendBytes(
-			Buffer.from(JSON.stringify(jsonData),'utf8')
-		);
+		global.connection && global.connection.send(JSON.stringify(jsonData));
 	}
 
 	function getConnectedUserList() {
@@ -198,10 +196,10 @@ module.exports = (io) => {
 			console.log("additionalUserCount : " + additionalUserCount);
 			if (additionalUserCount != 0) {
 				currentGameUserQueue.map(user => {
-					if (user.isJoined){
+					if (user.isJoined) {
 						waitingQueue.splice(0, 0, user);
 					}
-					else{
+					else {
 						user.socket.disconnect(true);
 					}
 				});
