@@ -235,7 +235,7 @@ module.exports = (io) => {
 			io.sockets.connected(uid).emit.emit(event, content);
 		}
 		catch (e) {
-
+			console.log(e);
 		}
 	}
 
