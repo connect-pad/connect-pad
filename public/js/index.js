@@ -71,6 +71,7 @@ $(document).ready(function () {
 	});
 
 	socket.on('soundEffect', function (data) {
+		console.log(data.file);
 		createjs.Sound.play(data.file);
 	});
 
