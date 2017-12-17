@@ -230,7 +230,13 @@ module.exports = (io) => {
 		console.log(uid);
 		console.log(event);
 		console.log(content);
-		io.to('/#' + uid).emit(event, content);
+		try {
+
+			io.sockets.connected(uid).emit.emit(event, content);
+		}
+		catch (e) {
+
+		}
 	}
 
 	global.serverRestarted = function () {
