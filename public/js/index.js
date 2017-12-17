@@ -1,12 +1,47 @@
 $(document).ready(function () {
-	var socket = io.connect(location.protocol + '//' + location.hostname + ':' + location.port);
 
-	socket.on('newScoreToClient', function (data) {
-		console.log("fdsafdsafdsafdsafdsa'");
+	
+	var soundList = [
+		{ filename: "131660__bertrof__game-sound-correct.wav", name: "button" }
+		// { filename: "1. Dead Inside.mp3", name: "button1" }
+	];
+	var nowLoadingSoundIndex = 0;
+	var loadSound = function (index) {
+		createjs.Sound.registerSound("/se/" + soundList[nowLoadingSoundIndex].filename, soundList[nowLoadingSoundIndex].name);
+	}
+	createjs.Sound.on("fileload", function (e) {
+		console.log(nowLoadingSoundIndex)
+		console.log(soundList.length);
+		if (nowLoadingSoundIndex >= soundList.length - 1) {
+
+			$("body>div, body>form").addClass('inactive');
+			$(".setUserName").removeClass('inactive');
+		}
+		else {
+			loadSound(++nowLoadingSoundIndex)
+		}
 	});
 
+	loadSound(0);
+
+
+
+	// createjs.Sound.registerSound("/se/131660__bertrof__game-sound-correct.wav", "button");
+	createjs.Sound.play("button");
+
+	$(".joinGame-selectCharacter").slick({
+		slidesToShow: 1,
+		slidesToScroll: 1,
+		autoplay: false,
+		speed: 1000
+	});
+
+
+	var socket = io.connect(location.protocol + '//' + location.hostname + ':' + location.port);
+
 	socket.on('sendUid', function (data) {
-		$("body").append("session: " + data);
+		$("body .sessionInfo").remove();
+		$("body").append("<span class='sessionInfo' style='display: block; position: absolute; z-index: 0; left: 0; bottom: 0;'>" + data + "</span>");
 	})
 
 	socket.on('userGroupReady', function (data) {
@@ -19,27 +54,32 @@ $(document).ready(function () {
 		navigator.vibrate(parseInt(data.time));
 	});
 
-	socket.on('gameStart', function(data){
-		$("body>div, body>form").addClass('inactive');
-		$(".gamePlay").removeClass('inactive');		
+	socket.on('soundEffect', function (data) {
+		createjs.Sound.play(data.file);
 	});
 
-	socket.on('gameEnd', function(data){
+	socket.on('gameStart', function (data) {
+		$("body>div, body>form").addClass('inactive');
+		$(".gamePlay").removeClass('inactive');
+	});
+
+	socket.on('gameEnd', function (data) {
 		$("body>div, body>form").addClass('inactive');
 		$(".waitForReady").removeClass('inactive');
-		
+
 	});
 
-	socket.on('serverRestarted', function(data){
+
+	socket.on('serverRestarted', function (data) {
 		location.reload();
 	});
 
-	socket.on('disconnected', function(data){
+	socket.on('disconnected', function (data) {
 		location.reload();
 	});
 
 	$("body>div, body>form").addClass('inactive');
-	$(".setUserName").removeClass('inactive');
+	$(".splashScreen").removeClass('inactive');
 
 
 	$("body").on("submit", ".setUserName", function (e) {
@@ -47,6 +87,9 @@ $(document).ready(function () {
 		socket.emit('initialization', { name: $(this).find('input').val() });
 		$("body>div, body>form").addClass('inactive');
 		$(".waitForReady").removeClass('inactive');
+		createjs.Sound.play("button");
+		navigator.vibrate(100);
+		document.activeElement.blur();
 	});
 
 	$("body").on("submit", ".joinGame", function (e) {
@@ -54,6 +97,9 @@ $(document).ready(function () {
 		socket.emit('userJoin', {});
 		$("body>div, body>form").addClass('inactive');
 		$(".waitForReady").removeClass('inactive');
+		createjs.Sound.play("button");
+		navigator.vibrate(100);
+		document.activeElement.blur();
 	});
 
 
@@ -115,12 +161,12 @@ $(document).ready(function () {
 		socket.emit('rotationKeyUp', {});
 	});
 
-	var timeoutTimer ;
-	document.addEventListener("visibilitychange", function(e) { 
+	var timeoutTimer;
+	document.addEventListener("visibilitychange", function (e) {
 		console.log(document.hidden, document.visibilityState);
 		timeoutTimer && clearTimeout(timeoutTimer);
-		if(document.hidden || document.visibilityState == "hidden"){
-			timeoutTimer = setTimeout(function() {
+		if (document.hidden || document.visibilityState == "hidden") {
+			timeoutTimer = setTimeout(function () {
 				socket.disconnect();
 				location.reload();
 			}, 3000);

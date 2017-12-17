@@ -1,3 +1,17 @@
+@font-face {
+    font-family: 'SungDongMyungjo';
+    font-style: normal;
+    font-weight: 400;
+    src: url('//cdn.jsdelivr.net/korean-webfonts/1/orgs/govs/sdgu/SungDongMyungjo/SungDongMyungjoR.woff2') format('woff2'), url('//cdn.jsdelivr.net/korean-webfonts/1/orgs/govs/sdgu/SungDongMyungjo/SungDongMyungjoR.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'SungDongMyungjo';
+    font-style: normal;
+    font-weight: 700;
+    src: url('//cdn.jsdelivr.net/korean-webfonts/1/orgs/govs/sdgu/SungDongMyungjo/SungDongMyungjoB.woff2') format('woff2'), url('//cdn.jsdelivr.net/korean-webfonts/1/orgs/govs/sdgu/SungDongMyungjo/SungDongMyungjoB.woff') format('woff');
+}
+
 html {
     width: 100%;
     height: 100%;
@@ -17,7 +31,7 @@ body {
     background-color: #2D2926;
     color: #F4F5F0;
     font-size: 22px;
-    font-family: 'Emulogic', 'DOSGothic', sans-serif;
+    font-family: 'SungDongMyungjo', sans-serif;
 }
 
 body * {
@@ -25,10 +39,41 @@ body * {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     font-size: 1em;
-    font-family: 'Emulogic', 'DOSGothic', sans-serif;
+    font-family: 'SungDongMyungjo', sans-serif;
 }
 
-.setUserName, .joinGame {
+.slick-arrow {
+    display: none !important;
+}
+
+.splashScreen {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    align-items: center;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    background-color: #F4F5F0;
+    color: #2D2926;
+    -webkit-transition: all 0.7s ease-in-out;
+    -moz-transition: all 0.7s ease-in-out;
+    transition: all 0.7s ease-in-out;
+    z-index: 999;
+}
+
+.splashScreen.inactive {
+    opacity: 0;
+    /* top: -100%; */
+}
+
+.setUserName,
+.joinGame {
     width: 100%;
     height: 100%;
     position: relative;
@@ -43,7 +88,8 @@ body * {
     top: 0px;
 }
 
-.setUserName>div, .joinGame>div {
+.setUserName>div,
+.joinGame>div {
     width: 100%;
     height: auto;
     max-width: 420px;
@@ -56,6 +102,23 @@ body * {
 .joinGame button {
     width: 100%;
     height: auto;
+}
+
+.joinGame .joinGame-selectCharacter {
+    width: 100%;
+    height: 100px;
+    /* background-color: blue; */
+}
+
+.joinGame .joinGame-selectCharacter div {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.joinGame .joinGame-selectCharacter div img {
+    height: 100%;
+    display: inline-block;
 }
 
 .gamePlay {
@@ -81,7 +144,7 @@ body * {
     right: 0px;
 }
 
-.inactive{
+.inactive {
     opacity: 0;
     z-index: -999;
 }

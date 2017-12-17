@@ -10,12 +10,20 @@
         <%= title %>
     </title>
     <link rel='stylesheet' href='/css/style.css' />
+    <link rel="stylesheet" type="text/css" href="//kenwheeler.github.io/slick//slick/slick.css" />
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
+    <script type="text/javascript" src="//kenwheeler.github.io/slick//slick/slick.js"></script>
+
     <script src="/js/nipplejs.js"></script>
 </head>
 
 <body>
+    <div class="splashScreen">
+        <div>loading</div>
+    </div>
     <form class="setUserName">
         <div>
             <h3 class="title">당신의 이름을 입력해주세요.</h3>
@@ -30,7 +38,15 @@
     </div>
     <form class="joinGame">
         <div>
-            <h3>게임에 참가합니까?</h3>
+            <h3>게임이 준비되었습니다.</h3>
+            <div class="joinGame-selectCharacter">
+                <div>
+                    <img src="/img/c1/cha_01_left_01.png" alt="">
+                </div>
+                <div>
+                    <img src="/img/c2/cha_02_left_01.png" alt="">
+                </div>
+            </div>
             <button type="submit">계속한다</button>
         </div>
     </form>
@@ -47,4 +63,3 @@
 </body>
 
 </html>
-
