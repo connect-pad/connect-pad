@@ -2,7 +2,8 @@ $(document).ready(function () {
 
 
 	var soundList = [
-		{ filename: "131660__bertrof__game-sound-correct.wav", name: "button" }
+		{ filename: "131660__bertrof__game-sound-correct.wav", name: "button" },
+		{ filename: "gun1.ogg", name: "sound1" }
 		// { filename: "1. Dead Inside.mp3", name: "button1" }
 	];
 	var nowLoadingSoundIndex = 0;
