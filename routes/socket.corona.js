@@ -64,6 +64,8 @@ wsServer.on('request', function (request) {
 
 			// message.utf8Data
 			var data = JSON.parse(message.utf8Data);
+
+			console.log(data);
 			switch (data.event) {
 				case "gameEnd":
 					global.gameEnd();

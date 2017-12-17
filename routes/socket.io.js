@@ -227,6 +227,9 @@ module.exports = (io) => {
 	}
 
 	global.emitToUserSocket = function (uid, event, content) {
+		console.log(uid);
+		console.log(event);
+		console.log(content);
 		io.to('/#' + uid).emit(event, content);
 	}
 
